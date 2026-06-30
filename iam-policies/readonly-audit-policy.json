@@ -1,0 +1,72 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadOnlyAuditAccess",
+      "Effect": "Allow",
+      "Action": [
+        "cloudtrail:DescribeTrails",
+        "cloudtrail:GetTrailStatus",
+        "cloudtrail:LookupEvents",
+        "cloudtrail:ListTrails",
+        "config:DescribeConfigRules",
+        "config:DescribeConfigurationRecorders",
+        "config:GetComplianceDetailsByConfigRule",
+        "config:GetComplianceSummaryByConfigRule",
+        "ec2:Describe*",
+        "guardduty:GetDetector",
+        "guardduty:ListDetectors",
+        "guardduty:ListFindings",
+        "guardduty:GetFindings",
+        "iam:GenerateCredentialReport",
+        "iam:GetCredentialReport",
+        "iam:GetAccountPasswordPolicy",
+        "iam:GetAccountSummary",
+        "iam:ListUsers",
+        "iam:ListRoles",
+        "iam:ListPolicies",
+        "iam:ListAttachedUserPolicies",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListMFADevices",
+        "iam:ListAccessKeys",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "logs:FilterLogEvents",
+        "s3:GetBucketAcl",
+        "s3:GetBucketLogging",
+        "s3:GetBucketPolicy",
+        "s3:GetBucketPublicAccessBlock",
+        "s3:GetBucketVersioning",
+        "s3:ListAllMyBuckets",
+        "securityhub:GetFindings",
+        "securityhub:ListHubs",
+        "wafv2:GetWebACL",
+        "wafv2:ListWebACLs",
+        "wafv2:GetLoggingConfiguration"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyAllWrites",
+      "Effect": "Deny",
+      "Action": [
+        "ec2:*",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "iam:Create*",
+        "iam:Delete*",
+        "iam:Put*",
+        "iam:Attach*",
+        "iam:Detach*",
+        "rds:*",
+        "lambda:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:PrincipalTag/Role": "auditor"
+        }
+      }
+    }
+  ]
+}
