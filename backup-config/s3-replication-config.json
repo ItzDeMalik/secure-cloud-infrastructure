@@ -1,0 +1,53 @@
+{
+  "ReplicationConfiguration": {
+    "Role": "arn:aws:iam::ACCOUNT_ID:role/internee-s3-replication-role",
+    "Rules": [
+      {
+        "ID": "ReplicateAll",
+        "Status": "Enabled",
+        "Filter": {
+          "Prefix": ""
+        },
+        "Destination": {
+          "Bucket": "arn:aws:s3:::internee-backup-ap-south-1",
+          "StorageClass": "STANDARD_IA",
+          "ReplicationTime": {
+            "Status": "Enabled",
+            "Time": {
+              "Minutes": 15
+            }
+          },
+          "Metrics": {
+            "Status": "Enabled",
+            "EventThreshold": {
+              "Minutes": 15
+            }
+          },
+          "EncryptionConfiguration": {
+            "ReplicaKmsKeyID": "arn:aws:kms:ap-south-1:ACCOUNT_ID:key/REPLICA_KMS_KEY_ID"
+          }
+        },
+        "DeleteMarkerReplication": {
+          "Status": "Enabled"
+        },
+        "SourceSelectionCriteria": {
+          "SseKmsEncryptedObjects": {
+            "Status": "Enabled"
+          }
+        }
+      }
+    ]
+  },
+  "Notes": {
+    "PrimaryRegion": "us-east-1",
+    "ReplicaRegion": "ap-south-1",
+    "ReplicationSLA": "15 minutes",
+    "Encryption": "SSE-KMS on both source and destination",
+    "StorageClass": "STANDARD_IA for cost optimization on replica",
+    "Prerequisites": [
+      "Versioning must be enabled on both source and destination buckets",
+      "Destination bucket must exist before applying this config",
+      "IAM replication role must have s3:ReplicateObject permissions"
+    ]
+  }
+}
