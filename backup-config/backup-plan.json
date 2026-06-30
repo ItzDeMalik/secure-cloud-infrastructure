@@ -1,0 +1,80 @@
+{
+  "BackupPlan": {
+    "BackupPlanName": "internee-multi-region-backup",
+    "BackupPlanRule": [
+      {
+        "RuleName": "DailyBackup",
+        "TargetBackupVaultName": "internee-backup-vault-primary",
+        "ScheduleExpression": "cron(0 2 * * ? *)",
+        "StartWindowMinutes": 60,
+        "CompletionWindowMinutes": 180,
+        "Lifecycle": {
+          "DeleteAfterDays": 30
+        },
+        "CopyActions": [
+          {
+            "DestinationBackupVaultArn": "arn:aws:backup:ap-south-1:ACCOUNT_ID:backup-vault:internee-backup-vault-replica",
+            "Lifecycle": {
+              "DeleteAfterDays": 30
+            }
+          }
+        ]
+      },
+      {
+        "RuleName": "WeeklyBackup",
+        "TargetBackupVaultName": "internee-backup-vault-primary",
+        "ScheduleExpression": "cron(0 3 ? * SUN *)",
+        "StartWindowMinutes": 60,
+        "CompletionWindowMinutes": 300,
+        "Lifecycle": {
+          "DeleteAfterDays": 90
+        },
+        "CopyActions": [
+          {
+            "DestinationBackupVaultArn": "arn:aws:backup:ap-south-1:ACCOUNT_ID:backup-vault:internee-backup-vault-replica",
+            "Lifecycle": {
+              "DeleteAfterDays": 90
+            }
+          }
+        ]
+      },
+      {
+        "RuleName": "MonthlyBackup",
+        "TargetBackupVaultName": "internee-backup-vault-primary",
+        "ScheduleExpression": "cron(0 4 1 * ? *)",
+        "StartWindowMinutes": 60,
+        "CompletionWindowMinutes": 480,
+        "Lifecycle": {
+          "MoveToColdStorageAfterDays": 30,
+          "DeleteAfterDays": 365
+        },
+        "CopyActions": [
+          {
+            "DestinationBackupVaultArn": "arn:aws:backup:ap-south-1:ACCOUNT_ID:backup-vault:internee-backup-vault-replica",
+            "Lifecycle": {
+              "MoveToColdStorageAfterDays": 30,
+              "DeleteAfterDays": 365
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "BackupSelection": {
+    "SelectionName": "internee-all-resources",
+    "IamRoleArn": "arn:aws:iam::ACCOUNT_ID:role/AWSBackupDefaultServiceRole",
+    "Resources": [
+      "arn:aws:ec2:*:*:instance/*",
+      "arn:aws:rds:*:*:db:*",
+      "arn:aws:dynamodb:*:*:table/*",
+      "arn:aws:s3:::internee-*"
+    ],
+    "ListOfTags": [
+      {
+        "ConditionType": "STRINGEQUALS",
+        "ConditionKey": "Backup",
+        "ConditionValue": "true"
+      }
+    ]
+  }
+}
