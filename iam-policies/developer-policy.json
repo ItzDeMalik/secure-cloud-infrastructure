@@ -1,0 +1,114 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EC2ReadWrite",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeInstances",
+        "ec2:DescribeInstanceStatus",
+        "ec2:DescribeImages",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeVpcs",
+        "ec2:StartInstances",
+        "ec2:StopInstances",
+        "ec2:RebootInstances"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": ["us-east-1", "ap-south-1"]
+        }
+      }
+    },
+    {
+      "Sid": "S3DeveloperBuckets",
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:ListBucket",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": [
+        "arn:aws:s3:::internee-dev-*",
+        "arn:aws:s3:::internee-dev-*/*"
+      ]
+    },
+    {
+      "Sid": "S3DenyPublicAccess",
+      "Effect": "Deny",
+      "Action": [
+        "s3:PutBucketPublicAccessBlock",
+        "s3:DeleteBucketPublicAccessBlock",
+        "s3:PutBucketAcl",
+        "s3:PutObjectAcl"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "LambdaReadWrite",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:ListFunctions",
+        "lambda:GetFunction",
+        "lambda:InvokeFunction",
+        "lambda:UpdateFunctionCode",
+        "lambda:UpdateFunctionConfiguration",
+        "lambda:GetFunctionConfiguration"
+      ],
+      "Resource": "arn:aws:lambda:*:*:function:internee-*"
+    },
+    {
+      "Sid": "CloudWatchLogs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "logs:GetLogEvents",
+        "logs:FilterLogEvents"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyIAMChanges",
+      "Effect": "Deny",
+      "Action": [
+        "iam:CreateUser",
+        "iam:DeleteUser",
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:AttachRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy",
+        "iam:CreateAccessKey",
+        "iam:DeleteAccessKey"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyBillingAccess",
+      "Effect": "Deny",
+      "Action": [
+        "aws-portal:*",
+        "budgets:*",
+        "ce:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "RequireMFA",
+      "Effect": "Deny",
+      "Action": "*",
+      "Resource": "*",
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "false"
+        }
+      }
+    }
+  ]
+}
